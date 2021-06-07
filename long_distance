@@ -1,1 +1,34 @@
+import IPython
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.io import wavfile
+
+plt.rcParams["figure.figsize"] = (14, 6) # 14 by 6 inches graph
+rate, s = wavfile.read('male.wav')
+plt.plot(s)
+IPython.display.Audio(s, rate=rate)
+
+norm = 1.0 / max(np.absolute([min(s), max(s)]))
+sA = 100.00 * s * norm #s SA is samples in analog audio
+
+sD = np.round(sA) # SD is samples in the digital version
+
+plt.plot(sA - sD) # plot the difference  
+
+def SNR(noisy, original): #this computes signal to noise ratio(SNR)
+    err = np.linalg.norm(original-noisy) #power of the error in the signal
+    #power of the signal 
+    sig = np.linalg.norm(original)
+    #SNR in dBs
+    return 10 * np.log10(sig/err)
+
+print('SNR = %f dB' % SNR(sD , sA))
+IPython.display.Audio(sA, rate=rate)
+
+
+
+
+
+
 
