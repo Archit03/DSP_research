@@ -26,6 +26,61 @@ def SNR(noisy, original): #this computes signal to noise ratio(SNR)
 print('SNR = %f dB' % SNR(sD , sA))
 IPython.display.Audio(sA, rate=rate)
 
+  
+#TRANSMISSION ## 
+'''
+The function repeats a function that repeats the net effect of transmitting
+audio over a cable segment transmitted by a repeated (ampliphier or regulator of a signal)
+
+=> The signal is attenuated (reduced in power) 
+=> The signal is accumulates additive noise at it propagates through the cable
+=> The signal is amplified to the original amplitude by the repeater
+ 
+''' 
+ 
+def repeater(x, noise_amplitude, attenuation):
+    noise = np.random.uniform(-noise_amplitude, noise_amplitude, len(x))
+    
+    #attenuation 
+    x = x * attenuation 
+    
+    #noise
+    x = x + noise
+    # gain compensation
+    
+    return x / attenuation
+
+def analog(x, num_repeaters, noise_amplitude, attenuation):
+    
+    for n in range(0, num_repeaters):
+        x = repeater(x, noise_amplitude, attenuation)
+    return x
+
+def digital(x, num_repeaters, noise_amplitude, attenuation):
+    for n in range(0, num_repeaters):
+        x = np.round(repeater(x, noise_amplitude, attenuation))
+    return x
+
+num_repeaters = 70
+noise_amplitude = 0.2
+attenuation = 0.5
+
+yA = analog(sA, num_repeaters, noise_amplitude, attenuation)
+print("Analog transmission: SNR = %f dB" % SNR(yA, sA))
+
+yD = digital(sD, num_repeaters, noise_amplitude, attenuation)
+print("Digital transmission: SNR = %f dB" % SNR(yD, sA))
+
+IPython.display.Audio(yA, rate=rate)
+IPython.display.Audio(yD, rate=rate)
+
+noise_amplitude = 0.3 
+
+yA = analog(sA, num_repeaters, noise_amplitude, attenuation)
+print('Analog transmission: SNR = %f dB ' % SNR(yA, sA))
+
+yD = digital(sD, num_repeaters, noise_amplitude, attenuation)
+print("Digital transmission: SNR=  %f dB " % SNR(yD, sD))
 
 
 
