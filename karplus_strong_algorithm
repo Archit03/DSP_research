@@ -1,0 +1,25 @@
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import IPython
+
+def KS_1(x, N):
+    #given the initial buffer x, produce a N-Sample output
+    # by concatenating identical copies of the buffer
+    y = x
+    while len(y) < N:
+        #keep appending until we reach or exceed the required length
+        y = np.append(y, x)
+    #trim the excess 
+    y = y[0:N+1]
+    return y
+
+plt.rcParams["figure.figsize"] = (14, 4)
+
+Fs = 16000 # 16 KHz sampling rate 
+
+#we are playing 50 samples that makes 16000/50 = 320 Hz
+
+b = np.random.randn(50)
+plt.stem(b)
+
