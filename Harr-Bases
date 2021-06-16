@@ -1,1 +1,37 @@
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import IPython
+from IPython.display import Image
+import math
 
+plt.gray()
+
+SIZE = 4
+img = np.zeros((SIZE, SIZE))
+for n in range(0, SIZE):
+    for m in range(0, SIZE):
+        if (n & 0x1) ^ (m & 0x1): #0 
+            img[n, m] = 255 
+
+plt.matshow(img)
+
+'''
+The Equivalence between the space of M * N matrices and R^mn can we
+easily define the inner product between 2 matrices in the usual way 
+
+⟨A,B⟩= 
+M−1  N-1
+∑    ∑ (a_m,n)⟨b_m,n⟩
+M=0  n=0 
+we take inner product between 2 matrices as the,
+standard inner product of their unrolled versions.
+The inner product allows us to define orthogonality between images,
+and this is rather useful since we're going to explore a 
+couple of bases for this space. 
+
+'''
+
+img = np.array(plt.imread('Sun.jpg'), dtype=int)
+plt.matshow(img) 
+img[:,0]
