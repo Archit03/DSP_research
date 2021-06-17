@@ -35,3 +35,44 @@ couple of bases for this space.
 img = np.array(plt.imread('Sun.jpg'), dtype=int)
 plt.matshow(img) 
 img[:,0]
+
+
+'''
+The canonical basis , the canonical vector basis for any matrix space R^M*N
+matrices where only one element equals to one while all the others are 0 .
+E_n with 0 <= n < MN. 
+'''
+def canonical(n, M=5, N=10):
+    e = np.zeros((M,N))
+    e[(n % M), int(n/M)] = 1 
+    return e 
+
+plt.matshow(canonical(0)) 
+plt.matshow(canonical(5))
+
+'''
+Transmitting images - The most intuitve way to do so is send the pixels,
+one by one and they can be re-constructed at the receiving end.
+The pixels value coeffcients of the decomposition of the image of the canonical basis. 
+For an instance image with 64 * 64 = 4096 .
+'''
+
+
+tx_img = np.ravel(img, "F")
+# unrolling of the image for transmission (we go column by column, hence "F")
+
+tx_img[int(len(tx_img)/2):] = 0
+
+rx_img = np.reshape(tx_img, (64, 64), "F")
+plt.matshow(rx_img) # should give a few errors or make the test image lossy
+
+'''
+But probably the better way to use linear algebra in this.
+So, we a more versatile change of basis for space of images. 
+
+=> Describe the haar basis, a new basis for the image space. 
+=> project the image in the new basis. 
+=> transmit the projection coefficients
+=> Re-build the image using the basis vector 
+
+'''
