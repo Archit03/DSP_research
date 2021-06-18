@@ -76,3 +76,27 @@ So, we a more versatile change of basis for space of images.
 => Re-build the image using the basis vector 
 
 '''
+Change of basis in a matrix  
+
+=>The analysis form  
+X = (2pi/N) * x, where x is the signal vector 
+ 
+=> The synthesis form 
+X = 1/N (2pi/N)^H x , where H is Hermitian operator 
+'''
+
+def harr1D(N, SIZE):
+    if math.floor(math.log(SIZE) / math.log(2)) != math.log(SIZE) / math.log(2):
+        print("Harr is only defined for lengths that are a power of 2 ")
+        return None
+    if n >= SIZE or n < 0:
+        print("Invalid index")
+        return None
+    #zero basis vector
+    if n == 0:
+        return np.ones(SIZE)
+    
+    #Express n > 1 as 2^p + q with p as large as possible
+    #then k = SIZE/2^p as the length of the support 
+    #and s = qk is the shift 
+    
