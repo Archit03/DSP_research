@@ -99,4 +99,23 @@ def harr1D(N, SIZE):
     #Express n > 1 as 2^p + q with p as large as possible
     #then k = SIZE/2^p as the length of the support 
     #and s = qk is the shift 
+    p = math.floor(math.log(n)/ math.log(2)) 
+    pp = int(pow(2, p))
+    k = SIZE / pp
+    s = (n - pp) * k  
     
+    h = np.zeros(SIZE)
+    h[int(s): int(s+k/2)] = -1 # this matrix is not normalized
+    return h
+
+def haar2D(n, SIZE=8):
+    #hr and hv is horizontal and vertical indices 
+    hr = haar1D(n % SIZE, SIZE)
+    hv = haar1D(int(n / SIZE), SIZE)
+    H = np.outer(hr, hv)
+    H = H / math.sqrt(np.sum(H*H))
+    return H
+
+plt.matshow(haar2D(1))
+plt.matshow(haar2D(50))
+plt.matshow(haar2D(10))
