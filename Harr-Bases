@@ -32,7 +32,7 @@ couple of bases for this space.
 
 '''
 
-img = np.array(plt.imread('Sun.jpg'), dtype=int)
+img = np.array(plt.imread('Cameraman.jpg'), dtype=int)
 plt.matshow(img) 
 img[:,0]
 
@@ -63,7 +63,7 @@ tx_img = np.ravel(img, "F")
 
 tx_img[int(len(tx_img)/2):] = 0
 
-rx_img = np.reshape(tx_img, (64, 64), "F")
+rx_img = np.reshape(tx_img, (512, 512), "F")
 plt.matshow(rx_img) # should give a few errors or make the test image lossy
 
 '''
