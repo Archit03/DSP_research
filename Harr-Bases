@@ -64,7 +64,7 @@ tx_img = np.ravel(img, "F")
 tx_img[int(len(tx_img)/2):] = 0
 
 rx_img = np.reshape(tx_img, (512, 512), "F")
-plt.matshow(rx_img) # should give a few errors or make the test image lossy
+plt.matshow(rx_img) 
 
 '''
 But probably the better way to use linear algebra in this.
