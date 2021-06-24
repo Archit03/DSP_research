@@ -115,7 +115,85 @@ def haar2D(n, SIZE=8):
     H = np.outer(hr, hv)
     H = H / math.sqrt(np.sum(H*H))
     return H
+plt.matshow(haar2D(0));
+plt.matshow(haar2D(1));
+plt.matshow(haar2D(10));
+plt.matshow(haar2D(63));
+'''
+=> Each basis matrix has positive and negative values in some symmetric patter
+   this means that the basis matrix will implicitly compute the difference between image areas.
+=> Low-index basis matrices take the difference between large areas, while high-index ones take
+   difference in smaller localized areas of the image. 
+   
+'''
+#using an 8 * 8 space to check if the haar matrices is orthogonal 
 
-plt.matshow(haar2D(1))
-plt.matshow(haar2D(50))
-plt.matshow(haar2D(10))
+#project the image onto the haar basis, obtaining a vector of 512^2 coefficients
+#this is similar to the analysis formula of DFT for the vector space with an orthogonal basis             
+
+
+tx_img = np.zeros(512*512)
+for k in range(0, (512*512)):
+    tx_img[k] = np.sum(img * haar2D(k, 512))
+
+# now rebuild the image with the synthesis formula; since the basis is orthonormal
+#  we just need to scale the basis matrices by the projection coefficients
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += tx_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+lossy_img = np.copy(tx_img)
+lossy_img[int(len(tx_img)/2):] = 0
+
+# rebuild matrix
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += lossy_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+lossy_img = np.copy(tx_img)
+lossy_img[int(len(tx_img)/2):] = 0
+
+# rebuild matrix
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += lossy_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+lossy_img = np.copy(tx_img)
+lossy_img[0:int(len(tx_img)/2)] = 0
+
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += lossy_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+tx_img = np.zeros(512*512)
+for k in range(0, (512*512)):
+    tx_img[k] = np.sum(img * haar2D(k, 512))
+
+# now rebuild the image with the synthesis formula; since the basis is orthonormal
+#  we just need to scale the basis matrices by the projection coefficients
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += tx_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+tx_img = np.zeros(512*512)
+for k in range(0, (512*512)):
+    tx_img[k] = np.sum(img * haar2D(k, 512))
+
+#rebuilding the matrix back to the original form , using the synthesis formula. 
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += tx_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+
