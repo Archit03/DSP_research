@@ -11,6 +11,10 @@ IPython.display.Audio(s , rate=SF)
 fc = 200.00
 wc = fc / (SF/2)
 b , a  = sp.butter(6 , wc )
+'''
+A butterworth filter is designed to to have a freq response as flat 
+as possible in the passband   
+'''
 wb, Hb = sp.freqz(b, a , 1024)
 plt.plot(wb[0:200]/np.pi *(SF/2) , np.abs(Hb[0:200]))
 
