@@ -7,6 +7,9 @@ plt.rcParams["figure.figsize"] = (14 , 4)
  
 
 def MSE_fit(A , B , order):
+ #order => number of taps(samples) 
+ #A => passband 
+ #B => stopband
     if order < 3:
         raise  ValueError("Order can't be less than 3")
     # interpolation points always one more than the order of the interpolator
