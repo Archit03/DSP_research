@@ -8,10 +8,14 @@ plt.rcParams['figure.figsize'] = (14, 4)
 
 
 '''
-x[n]----->+ ------------------------->y[n]
-          |                         |
-          |                         | 
-          |----(alpha)H(z)----z^-M--| 
+x[n]----->+ ----------------------------->y[n]
+          |                           |
+          |(alpha)                    | 
+          |<-----------H(z)----z^-M---| 
+          
+          where alpha is attenuation where signal of an echo dies out over time
+          
+          y[n] = x[n]- lamda * x[n-1] + lamda * y[n-1] + (alpha)(1-lamda) * y[n-M]
 '''
 
 #using the leaky integrator for echo cancelation 
