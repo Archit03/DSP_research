@@ -1,0 +1,98 @@
+import numpy as np
+import pandas as pd
+import datetime as dt 
+import matplotlib.pyplot as plt
+plt.rcParams['figure.figsize'] = (20, 10)
+def BL_interpolation_1D(x, z, T, order, grid_size=0.01, win=True):
+    '''
+    BL interpolation of 1D functions
+    '''
+    
+    k = np.expand_dims(np.arange(-order, order+1), 0)
+    
+    F = np.exp(2j*np.pi*x*k/(T[1]-T[0]))
+    
+    C = np.dot(np.dot(np.linalg.inv(np.dot(F.T,F)), F.T),z)
+    
+    xg = np.expand_dims(np.arange(T[0], T[1], grid_size), 1)
+    
+    if(win):
+        C *= np.expand_dims(np.hanning(2*order+1), 1)
+    zg = np.dot(np.exp(2j*np.pi*xg*k/(T[1]-T[0])), C)
+    
+    return zg, xg, C, k 
+   
+def f_BL(x):
+    return 2*np.sin(2*np.pi*1*x) - 4 * np.cos(2 * np.pi*4*x)
+
+# Take a random set of measurements on [0,2\pi]
+T = [0, 1]
+order = 6
+
+x = (T[1]-T[0])*np.random.random((100,1))+T[0]
+z = f_BL(x)
+
+zp1, xp1, C1, k1 = BL_interpolation_1D(x, z, T, order, win=False)
+
+plt.subplot(2,1,1)
+plt.plot(xp1, np.real(zp1), 'r-', xp1, f_BL(xp1), 'k--', x, z, 'o')
+plt.title('Time Domain')
+plt.legend(('Interpolated', 'Original','Measurements'))
+
+plt.subplot(2,1,2)
+plt.stem(k1.T, abs(C1))
+plt.title('Fourier coefficients magnitude')
+plt.show()
+
+def f2(x):
+    return (abs(x)-0.5)**2
+
+T = [-0.5, 0.5]
+order = 10
+
+x = (T[1]-T[0])*np.random.random((100,1))+T[0]
+z = f2(x)
+
+# compute BL interpolation
+zp1, xp1, C1, k1 = BL_interpolation_1D(x, z, T, order, win=False)
+
+# plot the result
+plt.subplot(2,1,1)
+plt.plot(xp1, np.real(zp1), 'r-', xp1, f2(xp1), 'k--', x, z, 'o')
+plt.xlim([-0.5,0.5])
+plt.title('Time Domain')
+plt.legend(('Interpolated', 'Original','Measurements'))
+
+plt.subplot(2,1,2)
+plt.stem(k1.T, abs(C1), 'k')
+plt.title('Fourier coefficients magnitude')
+
+plt.show()
+
+'''
+f2(x) -> Although, f2 creates a good interpolation, 
+creates a non-differentiable interpolation around f(0) = 0.25.
+'''
+
+def f3(x):
+    return (x-np.floor(x)) ** 2   
+
+T = [-0.5, 0.5]
+order = 10 
+x = (T[1]-T[0]) * np.random.random((100,1))+T[0]
+z = f3(x)
+
+zp1, xp1, C1, k1 = BL_interpolation_1D(x, z, T, order, win=False)
+
+plt.subplot(2,1, 1)
+plt.plot(xp1, np.real(zp1), 'r--', xp1, f3(xp1), 'k--', x, z, 'o')
+plt.xlim([-0.5, 0.5])
+plt.title('Time domain')
+plt.legend(('Interpolated', 'GroundTruth', 'Measurements'))
+
+plt.subplot(2,1,2)
+plt.stem(k1.T, abs(C1), 'k')
+plt.title('Fourier coefficients magnitude')
+
+plt.show()
+
