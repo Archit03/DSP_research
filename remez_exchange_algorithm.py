@@ -2,7 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from IPython.display import Audio, display 
 from ipywidgets import interactive, fixed 
-import parks as prk
+import parks as prk #in-written script
+import numba 
 
 #parks is parks_mcclellan_fir_design_algorithm
     
@@ -21,6 +22,7 @@ def solve(x, y):
     e = np.abs(v[-1])
     return p, e
 
+@numba.jit(nopython=True)
 def remez_fit(A, B, order, iterations):
     if order < 3:
         raise ValueError("Order can't be less than 3.")
