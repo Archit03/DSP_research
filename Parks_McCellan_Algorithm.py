@@ -2,10 +2,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from IPython.display import Audio , display
 from ipywidgets import interactive, fixed
+import numba 
 
 plt.rcParams["figure.figsize"] = (14 , 4)
  
-
+@numba.jit(nopython=True)
 def MSE_fit(A , B , order):
  #order => number of taps(samples) 
  #A => passband 
