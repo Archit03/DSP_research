@@ -45,3 +45,4 @@ def MSE_fit(A=0.4 , B=0.6 , order=10):
         plt.ylim(r[2], r[3])
         
 v = interactive(MSE_fit , order=(3,30) , A=(0.0 , 0.5), B=(0.5, 1.0))
+display(v)
