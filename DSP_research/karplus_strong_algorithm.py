@@ -1,0 +1,65 @@
+import numpy as np
+import matplotlib
+import matplotlib.pyplot as plt
+import IPython
+
+def KS_1(x, N):
+    #given the initial buffer x, produce a N-Sample output
+    # by concatenating identical copies of the buffer
+    y = x
+    while len(y) < N:
+        #keep appending until we reach or exceed the required length
+        y = np.append(y, x)
+    #trim the excess 
+    y = y[0:N+1]
+    return y
+
+plt.rcParams["figure.figsize"] = (14, 4)
+
+Fs = 16000 # 16 KHz sampling rate 
+
+#we are playing 50 samples that makes 16000/50 = 320 Hz
+
+b = np.random.randn(50)
+plt.stem(b)
+
+
+y = KS_1(b, Fs * 2)
+plt.stem(y[0:500])
+IPython.display.Audio(y, rate=Fs)
+
+#this gives a 100 samples , since the sample freq is 32000 , so 32000/100 = 320 Hz
+IPython.display.Audio(KS_1(np.random.rand(100), Fs * 2), rate=Fs)
+
+def KS_2(x, N): 
+    M = len(x)
+    y = np.zeros(N) 
+    for n in range(0, N):
+        y[n] = (x[n] if n < M else 0) + (y[n-M] if n-M >= 0 else 0)
+    return y
+#50 samples 32000 Hz = 32000/50 = 640 Hz
+IPython.display.Audio(KS_2(np.random.rand(50), Fs * 2), rate=Fs)
+plt.stem(y[0:50])
+    
+#y[n] = x[n] + α(alpha)y[n-m]
+def KS_3(x, N, alpha=0.99):
+    M = len(x) # the signal being delayed by Z^-M
+    y = np.zeros(N)
+    for n in range(0, N):
+        y[n] = (x[n] if n < M else 0) + alpha * (y[n-M] if n-M >= 0 else 0)
+    return y      
+
+y = KS_3(b, Fs * 2)
+plt.stem(y[0:1000])
+IPython.display.Audio(y, rate=Fs)
+
+'''
+Every time the k-S loop is dampened, the initial buffer goes
+the loop, it gets multiplied by alpha so, 
+y[n]=(alpha^(floor(n/M))) x[n % M]
+
+'''
+IPython.display.Audio(KS_3(np.random.rand(50), Fs * 2), rate=Fs)
+IPython.display.Audio(KS_3(np.random.rand(10), Fs * 2), rate=Fs)
+
+

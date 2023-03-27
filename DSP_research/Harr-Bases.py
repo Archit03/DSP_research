@@ -1,0 +1,199 @@
+import matplotlib
+import matplotlib.pyplot as plt
+import numpy as np
+import IPython
+from IPython.display import Image
+import math
+
+plt.gray()
+
+SIZE = 4
+img = np.zeros((SIZE, SIZE))
+for n in range(0, SIZE):
+    for m in range(0, SIZE):
+        if (n & 0x1) ^ (m & 0x1): #0 
+            img[n, m] = 255 
+
+plt.matshow(img)
+
+'''
+The Equivalence between the space of M * N matrices and R^mn can we
+easily define the inner product between 2 matrices in the usual way 
+
+⟨A,B⟩= 
+M−1  N-1
+∑    ∑ (a_m,n)⟨b_m,n⟩
+M=0  n=0 
+we take inner product between 2 matrices as the,
+standard inner product of their unrolled versions.
+The inner product allows us to define orthogonality between images,
+and this is rather useful since we're going to explore a 
+couple of bases for this space. 
+
+'''
+
+img = np.array(plt.imread('Cameraman.jpg'), dtype=int)
+plt.matshow(img) 
+img[:,0]
+
+
+'''
+The canonical basis , the canonical vector basis for any matrix space R^M*N
+matrices where only one element equals to one while all the others are 0 .
+E_n with 0 <= n < MN. 
+'''
+def canonical(n, M=5, N=10):
+    e = np.zeros((M,N))
+    e[(n % M), int(n/M)] = 1 
+    return e 
+
+plt.matshow(canonical(0)) 
+plt.matshow(canonical(5))
+
+'''
+Transmitting images - The most intuitve way to do so is send the pixels,
+one by one and they can be re-constructed at the receiving end.
+The pixels value coeffcients of the decomposition of the image of the canonical basis. 
+For an instance image with 64 * 64 = 4096 .
+'''
+
+
+tx_img = np.ravel(img, "F")
+# unrolling of the image for transmission (we go column by column, hence "F")
+
+tx_img[int(len(tx_img)/2):] = 0
+
+rx_img = np.reshape(tx_img, (512, 512), "F")
+plt.matshow(rx_img) 
+
+'''
+But probably the better way to use linear algebra in this.
+So, we a more versatile change of basis for space of images. 
+
+=> Describe the haar basis, a new basis for the image space. 
+=> project the image in the new basis. 
+=> transmit the projection coefficients
+=> Re-build the image using the basis vector 
+
+'''
+Change of basis in a matrix  
+
+=>The analysis form  
+X = (2pi/N) * x, where x is the signal vector 
+ 
+=> The synthesis form 
+X = 1/N (2pi/N)^H x , where H is Hermitian operator 
+'''
+
+def harr1D(N, SIZE):
+    if math.floor(math.log(SIZE) / math.log(2)) != math.log(SIZE) / math.log(2):
+        print("Harr is only defined for lengths that are a power of 2 ")
+        return None
+    if n >= SIZE or n < 0:
+        print("Invalid index")
+        return None
+    #zero basis vector
+    if n == 0:
+        return np.ones(SIZE)
+    
+    #Express n > 1 as 2^p + q with p as large as possible
+    #then k = SIZE/2^p as the length of the support 
+    #and s = qk is the shift 
+    p = math.floor(math.log(n)/ math.log(2)) 
+    pp = int(pow(2, p))
+    k = SIZE / pp
+    s = (n - pp) * k  
+    
+    h = np.zeros(SIZE)
+    h[int(s): int(s+k/2)] = -1 # this matrix is not normalized
+    return h
+
+def haar2D(n, SIZE=8):
+    #hr and hv is horizontal and vertical indices 
+    hr = haar1D(n % SIZE, SIZE)
+    hv = haar1D(int(n / SIZE), SIZE)
+    H = np.outer(hr, hv)
+    H = H / math.sqrt(np.sum(H*H))
+    return H
+plt.matshow(haar2D(0));
+plt.matshow(haar2D(1));
+plt.matshow(haar2D(10));
+plt.matshow(haar2D(63));
+'''
+=> Each basis matrix has positive and negative values in some symmetric patter
+   this means that the basis matrix will implicitly compute the difference between image areas.
+=> Low-index basis matrices take the difference between large areas, while high-index ones take
+   difference in smaller localized areas of the image. 
+   
+'''
+#using an 8 * 8 space to check if the haar matrices is orthogonal 
+
+#project the image onto the haar basis, obtaining a vector of 512^2 coefficients
+#this is similar to the analysis formula of DFT for the vector space with an orthogonal basis             
+
+
+tx_img = np.zeros(512*512)
+for k in range(0, (512*512)):
+    tx_img[k] = np.sum(img * haar2D(k, 512))
+
+# now rebuild the image with the synthesis formula; since the basis is orthonormal
+#  we just need to scale the basis matrices by the projection coefficients
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += tx_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+lossy_img = np.copy(tx_img)
+lossy_img[int(len(tx_img)/2):] = 0
+
+# rebuild matrix
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += lossy_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+lossy_img = np.copy(tx_img)
+lossy_img[int(len(tx_img)/2):] = 0
+
+# rebuild matrix
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += lossy_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+lossy_img = np.copy(tx_img)
+lossy_img[0:int(len(tx_img)/2)] = 0
+
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += lossy_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+tx_img = np.zeros(512*512)
+for k in range(0, (512*512)):
+    tx_img[k] = np.sum(img * haar2D(k, 512))
+
+# now rebuild the image with the synthesis formula; since the basis is orthonormal
+#  we just need to scale the basis matrices by the projection coefficients
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += tx_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+tx_img = np.zeros(512*512)
+for k in range(0, (512*512)):
+    tx_img[k] = np.sum(img * haar2D(k, 512))
+
+#rebuilding the matrix back to the original form , using the synthesis formula. 
+rx_img = np.zeros((512, 512))
+for k in range(0, (512*512)):
+    rx_img += tx_img[k] * haar2D(k, 512)
+
+plt.matshow(rx_img)
+
+
