@@ -1,0 +1,32 @@
+
+
+
+
+
+
+Abstract:
+
+Number stations are shortwave radio stations that transmit encrypted messages to covert operatives in the field. These stations have been in operation for decades and have been the subject of much speculation and mystery. In this paper, we explore the use of Python and the SciPy library to analyze the signals transmitted by number stations.
+
+We begin by describing the history of number stations and the techniques used to encode their messages. We then provide an overview of the Fourier transform and the Fast Fourier Transform algorithm, which we will use to analyze the signals.
+
+Next, we describe our experimental setup, which consists of a shortwave radio receiver and a Python script that records and analyzes the signals. We then present the results of our analysis, including frequency spectra and spectrograms of several number station signals.
+
+
+Introduction:
+
+Number stations are shortwave radio stations that broadcast encrypted messages for intelligence and diplomatic purposes. The messages are broadcast in a format consisting of a sequence of numbers, letters, or other symbols that have been encoded to conceal their meaning. These stations have been operating since World War I and continue to this day, with many of them being operated by governments and intelligence agencies around the world such as the  American CIA, Russian Foreign Intelligence Service(FIS), Israeli Mossad, etc.  
+
+One of the ways to analyze the signals transmitted by number stations is to use Fourier analysis, specifically the Fast Fourier Transform (FFT). In this research paper, we will explain the basics of the FFT and its applications to signal analysis. We will also demonstrate how to use Python's Scipy library to perform FFT on a sample signal.
+
+Fast Fourier Transform
+The Fourier transform is a mathematical technique that transforms a time-domain signal into its frequency-domain representation. The Fourier transform of a signal can be used to identify the frequencies that make up the signal and their corresponding amplitudes. The Fast Fourier Transform (FFT) is an algorithm that efficiently computes the Fourier transform of a signal.
+
+The FFT is based on the fact that a complex waveform can be represented as the sum of simpler waveforms, each with its own frequency and amplitude. The FFT algorithm computes the discrete Fourier transform (DFT), which is a representation of the signal in terms of its constituent frequencies.
+
+The Scipy library in Python provides a module for performing FFT on signals. The FFT function in Scipy takes an input signal and returns its frequency-domain representation or with Inverse FFT in time domain used as per the analyst's preference. 
+
+
+
+
+
